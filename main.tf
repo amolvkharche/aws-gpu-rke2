@@ -32,41 +32,13 @@ resource "aws_instance" "rke2_server_init" {
     delete_on_termination = true
   }
 
-  user_data = <<-EOF
-    #!/bin/bash
-    set -ex
-    TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
-
-    PRIVATE_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/local-ipv4)
-    PUBLIC_IP=$(curl -s -f -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
-
-    mkdir -p /etc/rancher/rke2
-    mkdir -p /var/lib/rancher/rke2/server/manifests
-  
-
-    cat <<C_EOF > /etc/rancher/rke2/config.yaml
-    token: "${random_password.rke2_token.result}"
-    node-external-ip:
-      - "$PUBLIC_IP"
-    tls-san:
-      - "$PUBLIC_IP"
-      - "$PRIVATE_IP"
-    disable:
-      - rke2-ingress-nginx
-    ingress-controller: traefik
-    cni:
-      - canal
-    C_EOF
-
-
-    curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${var.rke2_version}" INSTALL_RKE2_TYPE="server" sh -
-    systemctl enable rke2-server.service
-    systemctl start rke2-server.service
-    sudo ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
-    export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
-
-  EOF
-
+  user_data = templatefile(
+    "${path.module}/cloud-init/server.yaml",
+    {
+      rke2_token   = random_password.rke2_token.result
+      rke2_version = var.rke2_version
+    }
+  )
   tags = {
     Name = "${var.cluster_name}-cp-1"
     Role = "control-plane-primary"
@@ -88,23 +60,14 @@ resource "aws_instance" "rke2_server_join" {
     delete_on_termination = true
   }
 
-  user_data = <<-EOF
-    #!/bin/bash
-    set -ex
-
-    mkdir -p /etc/rancher/rke2
-
-    cat <<C_EOF > /etc/rancher/rke2/config.yaml
-    server: https://${aws_instance.rke2_server_init.private_ip}:9345
-    token: "${random_password.rke2_token.result}"
-    cni:
-      - canal
-    C_EOF
-
-    curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${var.rke2_version}" INSTALL_RKE2_TYPE="server" sh -
-    systemctl enable rke2-server.service
-    systemctl start rke2-server.service
-  EOF
+  user_data = templatefile(
+    "${path.module}/cloud-init/server-join.yaml",
+    {
+      rke2_token        = random_password.rke2_token.result
+      rke2_version      = var.rke2_version
+      server_private_ip = aws_instance.rke2_server_init.private_ip
+    }
+  )
 
   depends_on = [aws_instance.rke2_server_init]
 
@@ -129,27 +92,14 @@ resource "aws_instance" "gpu_nodes" {
     delete_on_termination = true
   }
 
-  user_data = <<-EOF
-    #!/bin/bash
-    set -ex
-
-    apt-get update -y
-    apt-get install -y build-essential linux-headers-$(uname -r) curl
-
-    mkdir -p /etc/rancher/rke2
-
-    cat <<C_EOF > /etc/rancher/rke2/config.yaml
-    server: https://${aws_instance.rke2_server_init.private_ip}:9345
-    token: "${random_password.rke2_token.result}"
-    node-label:
-      - "node.kubernetes.io/instance-type=gpu"
-      - "accelerator=nvidia-gpu"
-    C_EOF
-
-    curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${var.rke2_version}" INSTALL_RKE2_TYPE="agent" sh -
-    systemctl enable rke2-agent.service
-    systemctl start rke2-agent.service
-  EOF
+  user_data = templatefile(
+    "${path.module}/cloud-init/agent.yaml",
+    {
+      rke2_token        = random_password.rke2_token.result
+      rke2_version      = var.rke2_version
+      server_private_ip = aws_instance.rke2_server_init.private_ip
+    }
+  )
 
   depends_on = [aws_instance.rke2_server_init]
 
@@ -173,24 +123,14 @@ resource "aws_instance" "worker_nodes" {
     delete_on_termination = true
   }
 
-  user_data = <<-EOF
-    #!/bin/bash
-    set -ex
-
-    apt-get update -y
-    apt-get install -y build-essential linux-headers-$(uname -r) curl
-
-    mkdir -p /etc/rancher/rke2
-
-    cat <<C_EOF > /etc/rancher/rke2/config.yaml
-    server: https://${aws_instance.rke2_server_init.private_ip}:9345
-    token: "${random_password.rke2_token.result}"
-    C_EOF
-
-    curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${var.rke2_version}" INSTALL_RKE2_TYPE="agent" sh -
-    systemctl enable rke2-agent.service
-    systemctl start rke2-agent.service
-  EOF
+  user_data = templatefile(
+    "${path.module}/cloud-init/agent.yaml",
+    {
+      rke2_token        = random_password.rke2_token.result
+      rke2_version      = var.rke2_version
+      server_private_ip = aws_instance.rke2_server_init.private_ip
+    }
+  )
 
   depends_on = [aws_instance.rke2_server_init]
 
