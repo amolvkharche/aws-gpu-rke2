@@ -4,6 +4,10 @@ cluster_name = "gpu-cluster
 # AWS region
 aws_region   = "us-east-1"
 
+# AWS access key and secret key
+access_key = ""
+secret_key = ""
+
 # Number of control-plane node s1 for single node and 3,5 for high availability
 server_node_count    = 1
 
