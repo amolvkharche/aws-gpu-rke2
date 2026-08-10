@@ -40,7 +40,6 @@ resource "helm_release" "gpu_operator" {
   chart            = "gpu-operator"
   namespace        = "gpu-operator"
   create_namespace = true
-  timeout          = 300
 
   values = [
     yamlencode({
@@ -74,8 +73,6 @@ resource "helm_release" "gpu_operator" {
   ]
 
   depends_on = [
-    null_resource.wait_for_rke2,
-    aws_instance.rke2_server_init,
-    aws_instance.gpu_nodes
+    null_resource.wait_for_rke2
   ]
 }
