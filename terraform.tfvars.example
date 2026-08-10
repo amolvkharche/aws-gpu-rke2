@@ -1,0 +1,24 @@
+# Name of cluster
+cluster_name = "gpu-cluster
+
+# AWS region
+aws_region   = "us-east-1"
+
+# Number of control-plane node s1 for single node and 3,5 for high availability
+server_node_count    = 1
+
+# Instance size of control-plane nodes
+server_instance_type = "t3.medium"
+
+# Number of GPU nodes 
+gpu_node_count    = 1
+
+# GPU nodes instance size Refer https://docs.aws.amazon.com/dlami/latest/devguide/gpu.html
+gpu_instance_type = "g4dn.xlarge"
+
+# Number of worker nodes for normal scheduling workloads like webserver,database,etc.
+worker_node_count    = 1
+
+# Instance size of worker nodes
+worker_instance_type = "t2.medium"
+
