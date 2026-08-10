@@ -97,7 +97,7 @@ Verify GPU Resource Allocation
 ```bash
 kubectl describe nodes | grep -A 6 "Capacity:"
 OR
-kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.capacity.nvidia\.com/gpu
+kubectl get nodes --selector=nvidia.com/gpu.count
 ```
 
 Deploy a sample Ollama app to consume GPU resources
