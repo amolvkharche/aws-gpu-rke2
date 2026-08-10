@@ -45,7 +45,7 @@ resource "aws_instance" "rke2_server_init" {
   }
 }
 
-# 7. Additional RKE2 Server Nodes
+# Additional RKE2 Server Nodes
 resource "aws_instance" "rke2_server_join" {
   count                  = max(0, var.server_node_count - 1)
   ami                    = data.aws_ami.ubuntu.id
