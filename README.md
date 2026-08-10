@@ -1,6 +1,6 @@
 # AWS RKE2 GPU Cluster with NVIDIA GPU Operator
 
-Poduction-ready Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher Kubernetes Engine 2)**, featuring full GPU acceleration via the **NVIDIA GPU Operator** and a self-hosted LLM inference stack (**Ollama + Open WebUI**).
+Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher Kubernetes Engine 2)**, featuring full GPU acceleration via the **NVIDIA GPU Operator** and a self-hosted LLM inference stack (**Ollama + Open WebUI**).
 
 ---
 
