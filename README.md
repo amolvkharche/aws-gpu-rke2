@@ -34,29 +34,28 @@ Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher K
 └── vpc.tf
 ```
 
-### Prerequisites
+#### Prerequisites
 Ensure you have the following tools installed and configured on your local machine:
 1) Terraform
 2) kubectl
 
-### Clone the Repository
+#### Clone the Repository
 ```bash
 git clone https://github.com/amolvkharche/aws-gpu-rke2.git
 cd aws-gpu-rke2
 ```
-### Rename terraform.tfvars.example file replace AWS access and secret key
+Rename terraform.tfvars.example file replace AWS access and secret key
 
 ```bash
 mv terraform.tfvars.example terraform.tfvars
 ```
-### Initialize and Deploy Infrastructure
-Initialize Terraform modules and apply the configuration:
+Initialize Terraform and apply the configuration:
 ```bash
 terraform init
 terraform apply -auto-approve
 ```
 
-### Verifying GPU Functionality
+#### Verifying GPU Functionality
 ```bash
 # kubectl get pods -n gpu-operator 
 NAME                                                          READY   STATUS      RESTARTS   AGE
@@ -74,12 +73,13 @@ nvidia-device-plugin-daemonset-mz85g                          1/1     Running   
 nvidia-driver-daemonset-lx7vl                                 1/1     Running     0          7m20s
 nvidia-operator-validator-lbp7g                               1/1     Running     0          7m6s
 ```
-### Verify GPU Resource Allocation
+Verify GPU Resource Allocation
+
 ```bash
 kubectl describe nodes | grep -A 6 "Capacity:"
 ```
 
-### Deploy a sample Ollama app to consume GPU
+Deploy a sample Ollama app to consume GPU resources
 ```bash
 kubectl apply -f manifests/01-ollama.yaml
 kubectl apply -f manifests/02-open-webui.yaml
@@ -117,4 +117,7 @@ Mon Aug 10 05:00:54 2026
 |    0   N/A  N/A           42912      C   /usr/lib/ollama/llama-server           2564MiB |
 +-----------------------------------------------------------------------------------------+
 ```
-
+### Destroying Infrastructure
+```
+terraform destroy -auto-approve
+```
