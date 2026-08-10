@@ -29,7 +29,7 @@ resource "aws_route_table" "public_rt" {
     gateway_id = aws_internet_gateway.gw.id
   }
 
-  tags = { Name = "${var.cluster_name}-rtß" }
+  tags = { Name = "${var.cluster_name}-rt" }
 }
 
 resource "aws_route_table_association" "public_assoc" {
@@ -37,7 +37,6 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# 4. Security Group for RKE2 Cluster Communication
 resource "aws_security_group" "rke2_sg" {
   name        = "rke2-cluster-sg"
   description = "Security Group for RKE2 cluster nodes"
@@ -59,33 +58,19 @@ resource "aws_security_group" "rke2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # RKE2 Server Node Registration / Supervisor Port
-  ingress {
-    from_port   = 9345
-    to_port     = 9345
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  # Kubelet Metrics / Internal Communication
-  ingress {
-    from_port   = 10250
-    to_port     = 10250
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
 
-  # Canal/Flannel CNI Overlay Network (VXLAN)
   ingress {
-    from_port   = 8472
-    to_port     = 8472
-    protocol    = "udp"
-    cidr_blocks = [var.vpc_cidr]
+    description = "HTTP Traffic"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Allow all internal inter-node traffic
@@ -93,7 +78,7 @@ resource "aws_security_group" "rke2_sg" {
     from_port = 0
     to_port   = 0 
     protocol  = "-1"
-    self      = true
+    cidr_blocks = [var.vpc_cidr]
   }
 
   # Outbound Access
