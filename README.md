@@ -124,9 +124,9 @@ kubectl apply -f manifests/02-open-webui.yaml
 The manifest contains: `chat.YOUR_SERVER_PUBLIC_IP.sslip.io`
 Replace `YOUR_SERVER_PUBLIC_IP` with the public IP of the ingress/control-plane node.
 For example:
-http://chat.203.0.113.10.sslip.io
+https://chat.203.0.113.10.sslip.io
 
-Access ollama webUI with `http://chat.YOUR_SERVER_PUBLIC_IP.sslip.io`
+Access ollama webUI with `https://chat.YOUR_SERVER_PUBLIC_IP.sslip.io`
 
 Verify GPU Utilization you will see similar output
 
