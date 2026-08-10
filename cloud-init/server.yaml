@@ -1,0 +1,64 @@
+#cloud-config
+package_update: true
+
+write_files:
+  - path: /etc/rancher/rke2/config.yaml.template
+    permissions: '0600'
+    content: |
+      token: "${rke2_token}"
+      disable:
+        - rke2-ingress-nginx
+      ingress-controller: traefik
+      cni:
+        - canal
+
+  - path: /var/lib/rancher/rke2/server/manifests/rke2-traefik-config.yaml.template
+    permissions: '0644'
+    content: |
+      apiVersion: helm.cattle.io/v1
+      kind: HelmChartConfig
+      metadata:
+        name: rke2-traefik
+        namespace: kube-system
+      spec:
+        valuesContent: |-
+          providers:
+            kubernetesIngress:
+              ingressEndpoint:
+                publishedService:
+                  enabled: false
+          additionalArguments:
+            - "--providers.kubernetesIngress.ingressEndpoint.ip=PUBLIC_IP_PLACEHOLDER"
+
+runcmd:
+  # 1. Ensure target directories exist
+  - mkdir -p /etc/rancher/rke2
+  - mkdir -p /var/lib/rancher/rke2/server/manifests
+
+  # 2. Fetch AWS IMDSv2 metadata IPs dynamically
+  - |
+    TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" || true)
+    PUBLIC_IP=$(curl -s -f -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 || echo "127.0.0.1")
+    PRIVATE_IP=$(curl -s -f -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/local-ipv4 || echo "127.0.0.1")
+
+    # Append dynamic TLS SANs to config.yaml
+    cp /etc/rancher/rke2/config.yaml.template /etc/rancher/rke2/config.yaml
+    cat <<EOT >> /etc/rancher/rke2/config.yaml
+    node-external-ip:
+      - "$PUBLIC_IP"
+    tls-san:
+      - "$PUBLIC_IP"
+      - "$PRIVATE_IP"
+    EOT
+
+    # Inject Public IP into Traefik Helm manifest
+    sed "s/PUBLIC_IP_PLACEHOLDER/$PUBLIC_IP/g" /var/lib/rancher/rke2/server/manifests/rke2-traefik-config.yaml.template > /var/lib/rancher/rke2/server/manifests/rke2-traefik-config.yaml
+    rm -f /var/lib/rancher/rke2/server/manifests/rke2-traefik-config.yaml.template /etc/rancher/rke2/config.yaml.template
+
+  # 3. Install and start RKE2 Server
+  - curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${rke2_version}" INSTALL_RKE2_TYPE="server" sh -
+  - systemctl enable rke2-server.service
+  - systemctl start rke2-server.service
+
+    sudo ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
+    export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
