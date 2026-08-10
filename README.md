@@ -13,6 +13,25 @@ Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher K
   * **Ollama:** Serves local LLM models (e.g., `llama3.2`) with persistent host storage and hardware acceleration.
   * **Open WebUI:** Provides a user-friendly, ChatGPT-like web interface accessible via Traefik Ingress.
 
+The default configuration is:
+
+1 × RKE2 control plane
+1 × GPU worker
+1 × standard worker
+
+The control-plane count is restricted to 1 or 3, allowing either a simple single-server cluster or a three-server HA configuration.
+
+For example:
+
+server_node_count = 3
+gpu_node_count    = 2
+worker_node_count = 2
+
+would provision:
+3 × RKE2 server nodes
+2 × GPU worker nodes
+2 × standard worker nodes
+
 ### Repository Structure
 
 ```text
@@ -77,18 +96,36 @@ Verify GPU Resource Allocation
 
 ```bash
 kubectl describe nodes | grep -A 6 "Capacity:"
+OR
+kubectl get nodes -o custom-columns=NAME:.metadata.name,GPU:.status.capacity.nvidia\.com/gpu
 ```
 
 Deploy a sample Ollama app to consume GPU resources
 ```bash
 kubectl apply -f manifests/01-ollama.yaml
-kubectl apply -f manifests/02-open-webui.yaml
 ```
 Download & Test an LLM (Llama 3.2)
 Pull Model via CLI
 ```
-kubectl exec -it deploy/ollama -- ollama pull llama3.2
+$ kubectl exec -it deploy/ollama -- ollama pull llama3.2
+
+List downloaded models:
+
+$ kubectl exec -it deploy/ollama -- ollama list
+
+Run a test:
+
+$ kubectl exec -it deploy/ollama -- ollama run llama3.2
 ```
+Deploy the included Open WebUI manifest:
+```
+kubectl apply -f manifests/02-open-webui.yaml
+```
+The manifest contains: `chat.YOUR_SERVER_PUBLIC_IP.sslip.io`
+Replace `YOUR_SERVER_PUBLIC_IP` with the public IP of the ingress/control-plane node.
+For example:
+http://chat.203.0.113.10.sslip.io
+
 Access ollama webUI with `http://chat.YOUR_SERVER_PUBLIC_IP.sslip.io`
 
 Verify GPU Utilization you will see similar output
