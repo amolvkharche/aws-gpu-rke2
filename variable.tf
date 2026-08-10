@@ -9,6 +9,17 @@ variable "aws_region" {
   description = "AWS region to deploy resources"
 }
 
+variable "access_key" {
+  type        = string
+  description = "AWS Access Key"
+}
+
+variable "secret_key" {
+  type        = string
+  description = "AWS secret key"
+}
+
+
 variable "vpc_cidr" {
   type        = string
   default     = "10.0.0.0/16"
