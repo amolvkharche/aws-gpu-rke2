@@ -21,12 +21,18 @@ Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher K
 
 ```text
 .
-├── main.tf          
-├── gpu_operator.tf   
-├── providers.tf      
-├── variables.tf      
-├── outputs.tf         
-└── README.md
+├── cloud-init
+│   ├── agent.yaml
+│   ├── server-join.yaml
+│   └── server.yaml
+├── data.tf
+├── gpu_operator.tf
+├── main.tf
+├── outputs.tf
+├── providers.tf
+├── terraform.tfvars
+├── variables.tf
+└── vpc.tf
 ```
 
 ## Prerequisites
