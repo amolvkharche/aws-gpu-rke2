@@ -47,6 +47,9 @@ would provision:
 │   ├── 01-ollama.yaml
 │   └── 02-open-webui.yaml
 ├── outputs.tf
+├── prometheus-grafana
+│   ├── 01-ollama.yaml
+│   └── 02-open-webui.yaml
 ├── providers.tf
 ├── terraform.tfvars
 ├── variables.tf
