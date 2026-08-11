@@ -32,8 +32,6 @@ write_files:
 
 runcmd:
   # 1. Ensure target directories exist
-  - hostnamectl set-hostname ${hostname}
-  - grep -q "$(hostname)" /etc/hosts || echo "127.0.0.1 $(hostname)" >> /etc/hosts
   - mkdir -p /etc/rancher/rke2
   - mkdir -p /var/lib/rancher/rke2/server/manifests
 
@@ -61,5 +59,3 @@ runcmd:
   - curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${rke2_version}" INSTALL_RKE2_TYPE="server" sh -
   - systemctl enable rke2-server.service
   - systemctl start rke2-server.service
-  - sudo ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
-  - export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
