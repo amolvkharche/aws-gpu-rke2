@@ -60,7 +60,7 @@ Log in.
 Go to Grafana -> Connections → Data sources
 You should see: Prometheus -> Click it. The URL should look similar to:
 ```
-http://monitoring-kube-prometheus-stack-prometheus.monitoring.svc:9090
+http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
 ```
 Grafana is running inside Kubernetes, so localhost would mean the Grafana container itself. Grafana must use the Kubernetes Service name to reach Prometheus.
 
