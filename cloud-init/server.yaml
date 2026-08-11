@@ -32,6 +32,8 @@ write_files:
 
 runcmd:
   # 1. Ensure target directories exist
+  - hostnamectl set-hostname ${hostname}
+  - grep -q "$(hostname)" /etc/hosts || echo "127.0.0.1 $(hostname)" >> /etc/hosts
   - mkdir -p /etc/rancher/rke2
   - mkdir -p /var/lib/rancher/rke2/server/manifests
 
