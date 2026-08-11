@@ -1,4 +1,4 @@
-#### Install promotheus and grafana
+### Install promotheus and grafana
 Add the repository and create namespace
 ```
 helm repo add prometheus-community  https://prometheus-community.github.io/helm-charts
@@ -24,7 +24,7 @@ monitoring-kube-prometheus-stack-operator-...   1/1     Running
 Replace your NODEIP with your actual IP.
 Apply:
 ```
-kubectl apply -f grafana-ingress.yaml
+kubectl apply -f prometheus-grafana/grafana-ingress.yaml
 ```
 check `kubectl get ingress -n monitoring`
 
