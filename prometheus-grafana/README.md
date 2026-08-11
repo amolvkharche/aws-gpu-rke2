@@ -10,7 +10,7 @@ Then install:
 ```
 helm upgrade --install monitoring \
   prometheus-community/kube-prometheus-stack \
-  --namespace monitoring --values prometheus-grafana-values.yaml
+  --namespace monitoring --values prometheus-grafana/prometheus-grafana-values.yaml
 ```
 Check pods, You should eventually see Grafana and Prometheus running:
 ```
