@@ -48,8 +48,10 @@ would provision:
 │   └── 02-open-webui.yaml
 ├── outputs.tf
 ├── prometheus-grafana
-│   ├── 01-ollama.yaml
-│   └── 02-open-webui.yaml
+│   ├── README.md
+│   ├── dcgm-servicemonitor.yaml
+│   ├── grafana-ingress.yaml
+│   ├── prometheus-grafana-values.yaml
 ├── providers.tf
 ├── terraform.tfvars
 ├── variables.tf
