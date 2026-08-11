@@ -45,7 +45,7 @@ runcmd:
     cp /etc/rancher/rke2/config.yaml.template /etc/rancher/rke2/config.yaml
     cat <<EOT >> /etc/rancher/rke2/config.yaml
     node-external-ip:
-      - "$PUBLIC_IP"
+      - "$PRIVATE_IP"
     tls-san:
       - "$PUBLIC_IP"
       - "$PRIVATE_IP"
@@ -59,6 +59,5 @@ runcmd:
   - curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION="${rke2_version}" INSTALL_RKE2_TYPE="server" sh -
   - systemctl enable rke2-server.service
   - systemctl start rke2-server.service
-
-    sudo ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
-    export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+  - sudo ln -sf /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/kubectl
+  - export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
