@@ -73,6 +73,21 @@ resource "aws_security_group" "rke2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 10250
+    to_port     = 10250
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  # Canal/Flannel CNI Overlay Network (VXLAN)
+  ingress {
+    from_port   = 8472
+    to_port     = 8472
+    protocol    = "udp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
   # Allow all internal inter-node traffic
   ingress {
     from_port = 0
