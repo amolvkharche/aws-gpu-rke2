@@ -72,3 +72,6 @@ http://monitoring-kube-prometheus-stack-prometheus.monitoring.svc:9090
 Then Save & test.
 
 Now import the GPU dashboard Go to: Dashboards → New → Import Enter: `24989` Click: Load
+
+<img width="2534" height="1185" alt="image" src="https://github.com/user-attachments/assets/cb71ba86-3993-4c6f-ac22-562742bc373d" />
+
