@@ -42,34 +42,7 @@ resource "helm_release" "gpu_operator" {
   create_namespace = true
 
   values = [
-    yamlencode({
-      toolkit = {
-        env = [
-          {
-            name  = "CONTAINERD_SOCKET"
-            value = "/run/k3s/containerd/containerd.sock"
-          },
-          {
-            name  = "CONTAINERD_SET_AS_DEFAULT"
-            value = "true"
-          }
-        ]
-      }
-
-      daemonsets = {
-        tolerations = [
-          {
-            key      = "nvidia.com/gpu"
-            operator = "Exists"
-            effect   = "NoSchedule"
-          }
-        ]
-      }
-
-      driver = {
-        enabled = true
-      }
-    })
+    file("${path.module}/cloud-init/gpu-operator-values.yaml")
   ]
 
   depends_on = [
