@@ -1,0 +1,19 @@
+toolkit:
+  env:
+    - name: CONTAINERD_SOCKET
+      value: /run/k3s/containerd/containerd.sock
+
+    - name: CONTAINERD_SET_AS_DEFAULT
+      value: "true"
+
+#mig:
+#  strategy: single      # Only enable when have MIG supported GPU instance.
+
+daemonsets:
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+
+driver:
+  enabled: true
