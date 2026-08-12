@@ -38,6 +38,7 @@ would provision:
 .
 ├── cloud-init
 │   ├── agent.yaml
+│   ├── gpu-operator-values.yaml
 │   ├── server-join.yaml
 │   └── server.yaml
 ├── data.tf
