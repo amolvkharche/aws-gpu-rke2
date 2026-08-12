@@ -9,6 +9,7 @@ Terraform setup to provision a Kubernetes cluster on AWS using **RKE2 (Rancher K
 * **GPU Worker Node:** Ubuntu 22.04 LTS running RKE2 Agent on an AWS GPU instance (`g4dn.xlarge` with NVIDIA Tesla T4 15GB GPU).
 * **Ingress Controller:** Built-in RKE2 Traefik Ingress Controller with dynamic `sslip.io` DNS routing.
 * **GPU Stack:** NVIDIA GPU Operator (Helm) hooked into RKE2's internal `containerd` runtime socket (`/run/k3s/containerd/containerd.sock`) to manage driver compilation, container toolkit, device plugin, and DCGM metrics exporter.
+* **MIG support:** Support Multi-Instance GPU (MIG) uncomment `mig.strategy.single or mixed` when you have MIG supported instance at `cloud-init/gpu-operator-values.yaml`
 * **AI Application Stack:** 
   * **Ollama:** Serves local LLM models (e.g., `llama3.2`) with persistent host storage and hardware acceleration.
   * **Open WebUI:** Provides a user-friendly, ChatGPT-like web interface accessible via Traefik Ingress.
@@ -23,9 +24,11 @@ The control-plane count is restricted to 1 or 3, allowing either a simple single
 
 For example:
 
-server_node_count = 3
-gpu_node_count    = 2
-worker_node_count = 2
+`server_node_count = 3`
+
+`gpu_node_count    = 2`
+
+`worker_node_count = 2`
 
 would provision:
 3 × RKE2 server nodes
