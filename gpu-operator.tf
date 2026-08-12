@@ -35,6 +35,7 @@ resource "null_resource" "wait_for_rke2" {
 }
 
 resource "helm_release" "gpu_operator" {
+  count            = var.gpu_node_count > 0 ? 1 : 0
   name             = "gpu-operator"
   repository       = "https://helm.ngc.nvidia.com/nvidia"
   chart            = "gpu-operator"
