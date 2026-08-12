@@ -40,10 +40,11 @@ would provision:
 ```text
 .
 ├── cloud-init
-│   ├── agent.yaml
+│   ├── gpu-agent.yaml
 │   ├── gpu-operator-values.yaml
 │   ├── server-join.yaml
 │   └── server.yaml
+│   ├── worker-agent.yaml
 ├── data.tf
 ├── gpu_operator.tf
 ├── main.tf
