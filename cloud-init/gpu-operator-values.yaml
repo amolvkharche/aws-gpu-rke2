@@ -7,7 +7,8 @@ toolkit:
       value: "true"
 
 #mig:
-#  strategy: single      # Only enable when have MIG supported GPU instance.
+#  strategy: single  # Only enable when have MIG supported GPU instance.
+#  strategy: mixed  # Only enable when have MIG supported GPU instance.
 
 daemonsets:
   tolerations:
