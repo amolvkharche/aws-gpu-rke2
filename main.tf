@@ -93,7 +93,7 @@ resource "aws_instance" "gpu_nodes" {
   }
 
   user_data = templatefile(
-    "${path.module}/cloud-init/agent.yaml",
+    "${path.module}/cloud-init/gpu-agent.yaml",
     {
       rke2_token        = random_password.rke2_token.result
       rke2_version      = var.rke2_version
@@ -124,7 +124,7 @@ resource "aws_instance" "worker_nodes" {
   }
 
   user_data = templatefile(
-    "${path.module}/cloud-init/agent.yaml",
+    "${path.module}/cloud-init/worker-agent.yaml",
     {
       rke2_token        = random_password.rke2_token.result
       rke2_version      = var.rke2_version
